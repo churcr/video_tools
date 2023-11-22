@@ -7,7 +7,7 @@ def remove_non_english_chars(input_string):
     # pattern = r'[^a-zA-Z0-9()-.]'
     # pattern = r'[^a-zA-Z0-9_()-\.]'
     # pattern = r'[^a-zA-Z0-9_()\-.\']'
-    pattern = r'[^a-zA-Z0-9_()\-.\' ]'
+    pattern = r'[^a-zA-Z0-9_()\-.\' ]!'
     cleaned_string = re.sub(pattern, ' ', input_string)
     return cleaned_string
 
