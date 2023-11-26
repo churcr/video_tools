@@ -1,0 +1,63 @@
+Absolutely, using a text file to store all the video file extensions and having scripts reference this file can streamline the process and ensure consistency across different scripts. You can create a simple text file where each line contains an extension:
+
+video_extensions.txt:
+.mp4
+.mkv
+.avi
+.mov
+.flv
+.wmv
+.mpg
+.mpeg
+
+import re
+import os
+
+def remove_non_english_chars(input_string):
+    pattern = r'[^a-zA-Z0-9_()\-.\' ]+'
+    cleaned_string = re.sub(pattern, ' ', input_string)
+    cleaned_string = re.sub(r'\s+', ' ', cleaned_string)
+    cleaned_string = cleaned_string.strip()
+    
+    base, extension = os.path.splitext(cleaned_string)
+    cleaned_string = base.rstrip() + extension
+    
+    return cleaned_string
+
+def get_video_extensions(file_path):
+    with open(file_path, 'r') as file:
+        extensions = file.read().splitlines()
+    return extensions
+
+def process_files_in_directory(directory_path, extensions_file):
+    video_extensions = get_video_extensions(extensions_file)
+    
+    for root, dirs, files in os.walk(directory_path):
+        for file in files:
+            if any(file.lower().endswith(ext) for ext in video_extensions):
+                original_file_path = os.path.join(root, file)
+                cleaned_file_name = remove_non_english_chars(file)
+                cleaned_file_path = os.path.join(root, cleaned_file_name)
+                if original_file_path == cleaned_file_path:
+                    continue
+                else:
+                    counter = 1
+                    while os.path.exists(cleaned_file_path):
+                        base, extension = os.path.splitext(cleaned_file_name)
+                        cleaned_file_name = f"{base}_{counter}{extension}"
+                        cleaned_file_path = os.path.join(root, cleaned_file_name)
+                        counter += 1
+                    
+                    print(original_file_path)
+                    print('has been renamed to')
+                    print(cleaned_file_path)
+                    os.rename(original_file_path, cleaned_file_path)
+
+# Usage
+extensions_file_path = 'video_extensions.txt'
+directory_to_process = 'your_directory_path_here'
+process_files_in_directory(directory_to_process, extensions_file_path)
+
+This code now includes a get_video_extensions() function that reads the extensions from the specified text file. The process_files_in_directory() function then utilizes these extensions to filter the video files in the directory.
+
+Make sure to replace 'your_directory_path_here' with the actual directory path you want to process. This modification allows different scripts to refer to the same file containing video extensions, ensuring uniformity across scripts.
