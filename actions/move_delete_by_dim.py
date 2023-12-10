@@ -85,7 +85,7 @@ def both_actions():
     # List all files in the selected directory
     # print(video_directory)
     files_deleted = False
-    video_files = [f for f in os.listdir(video_directory) if f.endswith((('.mp4', '.avi', '.mkv', '.mov', '.mpg', '.m4p', '.wmv', '.ts', '.vob', '.mpeg', '.3gp', '.m4v', '.m2ts'))]
+    video_files = [f for f in os.listdir(video_directory) if f.endswith((('.mp4', '.avi', '.mkv', '.mov', '.mpg', '.m4p', '.wmv', '.ts', '.vob', '.mpeg', '.3gp', '.m4v', '.m2ts')))]
     # Loop through each video file
     for video_file in video_files:
         video_path = os.path.join(video_directory, video_file)
