@@ -37,10 +37,7 @@ def process_files_in_directory(directory_path, extensions):
                         cleaned_file_path = os.path.join(root, cleaned_file_name)
                         counter += 1
 
-                    print(original_file_path)
-                    print('has been renamed to')
-                    print(cleaned_file_path)
-
+                    print(f'{original_file_path} RENAMED TO {cleaned_file_path}')
                     os.rename(original_file_path, cleaned_file_path)
 
 def main():
