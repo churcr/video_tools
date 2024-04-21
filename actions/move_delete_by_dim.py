@@ -48,7 +48,7 @@ def get_dir():
 def get_min_width():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
-    width_value = simpledialog.askstring("Minimum Width", "Enter the minimum video width:/t/t/t", initialvalue=480)
+    width_value = simpledialog.askstring("Minimum Width", "Enter the minimum video width:", initialvalue=639)
 
     try:
         min_width = float(width_value)
@@ -59,7 +59,7 @@ def get_min_width():
 def get_min_height():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
-    height_value = simpledialog.askstring("Minimum Height", "Enter the minimum video height:/t/t/t", initialvalue=480)
+    height_value = simpledialog.askstring("Minimum Height", "Enter the minimum video height:", initialvalue=639)
 
     try:
         min_height = float(height_value)
@@ -208,7 +208,7 @@ def delete_by_dim():
         # print(f"Video Name: {video_file} Dimensions {video_width}x{video_height} pixels: Category: {dimensions}")
         # print(f"Video Width is {video_width} and Minimum Width is {min_width}, Video Height is {video_height} and Minimum Height is {min_height}")
         # Check if the width is less than the minimum width and delete the video
-        if (video_width < min_width) or (video_height < min_height):
+        if (video_width < min_width) and (video_height < min_height):
             os.remove(video_path)
             deleted_files.append((video_file, video_width, video_height))
             print(f"Deleted {video_file} for small dimensions.")
