@@ -11,7 +11,12 @@ import cv2
 # Start of main code
 # Declare variables
 min_width = 0
+vert_min_width = 0
+horz_min_width = 0
+square_min_width_height = 0
 min_height = 0
+vert_min_height = 0
+horz_min_height = 0
 video_directory = ""
 output_directories = ""
 destination_directory = ""
@@ -45,25 +50,57 @@ def get_dir():
     else:
         return video_directory
 
-def get_min_width():
+def get_vert_min_width():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
-    width_value = simpledialog.askstring("Minimum Width", "Enter the minimum video width:", initialvalue=639)
+    vert_width_value = simpledialog.askstring("Minimum Vertical Width", "Enter the minimum vertical video width:", initialvalue=360)
 
     try:
-        min_width = float(width_value)
-        return min_width
+        vert_min_width = float(vert_width_value)
+        return vert_min_width
     except (ValueError, TypeError):
         return None
 
-def get_min_height():
+def get_horz_min_width():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
-    height_value = simpledialog.askstring("Minimum Height", "Enter the minimum video height:", initialvalue=639)
+    horz_width_value = simpledialog.askstring("Minimum Horizontal Width", "Enter the minimum horizontal video width:", initialvalue=640)
 
     try:
-        min_height = float(height_value)
-        return min_height
+        horz_min_width = float(horz_width_value)
+        return horz_min_width
+    except (ValueError, TypeError):
+        return None
+
+def get_vert_min_height():
+    root = tk.Tk()
+    root.withdraw()  # Hide the main window
+    vert_height_value = simpledialog.askstring("Minimum Vertical Height", "Enter the minimum vertical video height:", initialvalue=640)
+
+    try:
+        vert_min_height = float(vert_height_value)
+        return vert_min_height
+    except (ValueError, TypeError):
+        return None
+def get_horz_min_height():
+    root = tk.Tk()
+    root.withdraw()  # Hide the main window
+    horz_height_value = simpledialog.askstring("Minimum Horizontal Height", "Enter the minimum horizontal video height:", initialvalue=360)
+
+    try:
+        horz_min_height = float(horz_height_value)
+        return horz_min_height
+    except (ValueError, TypeError):
+        return None
+
+def get_square_min_width_height():
+    root = tk.Tk()
+    root.withdraw()  # Hide the main window
+    square_min_value = simpledialog.askstring("Minimum Square Width and Height", "Enter the minimum square video width and height:", initialvalue=480)
+
+    try:
+        square_min_width_height = float(square_min_value)
+        return square_min_width_height
     except (ValueError, TypeError):
         return None
 
@@ -80,8 +117,11 @@ def both_actions():
         os.makedirs(output_dir, exist_ok=True)
 
     # Get min dimensions
-    min_width = get_min_width()
-    min_height = get_min_height()
+    vert_min_width = get_vert_min_width()
+    vert_min_height = get_vert_min_height()
+    horz_min_width = get_horz_min_width()
+    horz_min_height = get_horz_min_height()
+    square_min_width_height = get_square_min_width_height()
     # List all files in the selected directory
     # print(video_directory)
     files_deleted = False
@@ -91,34 +131,50 @@ def both_actions():
         video_path = os.path.join(video_directory, video_file)
         # Load the video file using MoviePy
         video = VideoFileClip(video_path)
-        # Get the video dimensions (resolution)
-        video_width, video_height = video.size
-        # Determine the dimensions category (vertical, horizontal, or square)
-        if video_width < video_height:
-            dimensions = 'vert'
-        elif video_width > video_height:
-            dimensions = 'horz'
-        else:
-            dimensions = 'square'
-        # Close the video file
-        video.close()
-        # Print the video name, size, and dimensions
-        # print(f"Video Name: {video_file} Dimensions {video_width}x{video_height} pixels: Category: {dimensions}")
-        # print(f"Video Width is {video_width} and Minimum Width is {min_width}, Video Height is {video_height} and Minimum Height is {min_height}")
-        # Check if the width is less than the minimum width and delete the video
-        if (video_width < min_width) or (video_height < min_height):
-            os.remove(video_path)
-            deleted_files.append((video_file, video_width, video_height))
-            print(f"Deleted {video_file} for small dimensions.")
-            files_deleted = True
-        else:
-            # Move the video to the appropriate output directory
-            destination_dir = output_directories.get(dimensions)
-            if destination_dir:
-                destination_path = os.path.join(destination_dir, video_file)
-                os.rename(video_path, destination_path)
-                print(f"Moved {video_file} to '{dimensions}' folder.")
-                # print()
+        vid_length = VideoFileClip(vid_legnth)
+        if vid_length > 0:
+            # Get the video dimensions (resolution)
+            video_width, video_height = video.size
+            # Determine the dimensions category (vertical, horizontal, or square)
+            if video_width < video_height:
+                dimensions = 'vert'
+            elif video_width > video_height:
+                dimensions = 'horz'
+            else:
+                dimensions = 'square'
+            # Close the video file
+            video.close()
+            # Print the video name, size, and dimensions
+            print(f"Video Name: {video_file} Dimensions {video_width}x{video_height} pixels: Category: {dimensions}")
+            print(f"Video Width is {video_width} and Minimum Width is {min_width}, Video Height is {video_height} and Minimum Height is {min_height}")
+            # Check the dimensions
+            if (video_width < vert_min_width) and (video_height < vert_min_height):
+                # Video is smaller then the minimum vertical dimensions
+                os.remove(video_path)
+                deleted_files.append((video_file, video_width, video_height))
+                print(f"Deleted {video_file} for small dimensions.")
+                files_deleted = True
+            elif (video_width < norz_min_width) and (video_height < horz_min_height):
+                # Video is smaller then the minimum horizontal dimensions
+                os.remove(video_path)
+                deleted_files.append((video_file, video_width, video_height))
+                print(f"Deleted {video_file} for small dimensions.")
+                files_deleted = True
+            elif (video_width < square_min_width_height) and (video_height < square_min_width_height):
+                # Video is smaller then the minimum square dimensions
+                os.remove(video_path)
+                deleted_files.append((video_file, video_width, video_height))
+                print(f"Deleted {video_file} for small dimensions.")
+                files_deleted = True
+            else:
+                # Video passed all dimension tests so move the video to the appropriate output directory
+                destination_dir = output_directories.get(dimensions)
+                if destination_dir:
+                    destination_path = os.path.join(destination_dir, video_file)
+                    os.rename(video_path, destination_path)
+                    print(f"Moved {video_file} to '{dimensions}' folder.")
+                    # print()
+
     print("All Done Deleting and Moving Files!")
     print(files_deleted)
     if files_deleted:
@@ -151,38 +207,45 @@ def move_all():
         video_path = os.path.join(video_directory, video_file)
         # Load the video file using MoviePy
         video = VideoFileClip(video_path)
-        # Get the video dimensions (resolution)
-        video_width, video_height = video.size
-        # Determine the dimensions category (vertical, horizontal, or square)
-        if (video_width < min_width) or (video_height < min_height):
-            dimensions = 'too_small'
-        elif video_width < video_height:
-            dimensions = 'vert'
-        elif video_width > video_height:
-            dimensions = 'horz'
-        else:
-            dimensions = 'square'
-        # Close the video file
-        video.close()
-        # Print the video name, size, and dimensions
-        # print(f"Video Name: {video_file} Dimensions {video_width}x{video_height} pixels: Category: {dimensions}")
-        # print(f"Video Width is {video_width} and Minimum Width is {min_width}, Video Height is {video_height} and Minimum Height is {min_height}")
-        # Check if the width is less than the minimum width and delete the video
-        # Move the video to the appropriate output directory
-        destination_dir = output_directories.get(dimensions)
-        if destination_dir:
-            destination_path = os.path.join(destination_dir, video_file)
-            os.rename(video_path, destination_path)
-            print(f"Moved {video_file} to '{dimensions}' folder.")
-            # print()
-    print("All Done Moving Files!")
+        vid_length = video.duration
+        if vid_length > 0:
+            # Get the video dimensions (resolution)
+            video_width, video_height = video.size
+            # Determine the dimensions category (vertical, horizontal, or square)
+            if ((video_width < vert_min_width) and (video_height < vert_min_height)) or \
+            ((video_width < norz_min_width) and (video_height < horz_min_height)) or \
+            ((video_width < square_min_width_height) and (video_height < square_min_width_height)):
+                dimensions = 'too small'
+            elif video_width < video_height:
+                dimensions = 'vert'
+            elif video_width > video_height:
+                dimensions = 'horz'
+            else:
+                dimensions = 'square'
+            # Close the video file
+            video.close()
+            # Print the video name, size, and dimensions
+            # print(f"Video Name: {video_file} Dimensions {video_width}x{video_height} pixels: Category: {dimensions}")
+            # print(f"Video Width is {video_width} and Minimum Width is {min_width}, Video Height is {video_height} and Minimum Height is {min_height}")
+            # Check if the width is less than the minimum width and delete the video
+            # Move the video to the appropriate output directory
+            destination_dir = output_directories.get(dimensions)
+            if destination_dir:
+                destination_path = os.path.join(destination_dir, video_file)
+                os.rename(video_path, destination_path)
+                print(f"Moved {video_file} to '{dimensions}' folder.")
+                # print()
+                print("All Done Moving Files!")
 
 def delete_by_dim():
     video_directory = get_dir()
     # Create the output directories for different dimensions
     # Get min dimensions
-    min_width = get_min_width()
-    min_height = get_min_height()
+    vert_min_width = get_vert_min_width()
+    vert_min_height = get_vert_min_height()
+    horz_min_width = get_horz_min_width()
+    horz_min_height = get_horz_min_height()
+    square_min_width_height = get_square_min_width_height()
     files_deleted = False
     # List all files in the selected directory
     print(video_directory)
@@ -192,15 +255,17 @@ def delete_by_dim():
         video_path = os.path.join(video_directory, video_file)
         # Load the video file using MoviePy
         video = VideoFileClip(video_path)
-        # Get the video dimensions (resolution)
-        video_width, video_height = video.size
-        # Determine the dimensions category (vertical, horizontal, or square)
-        if video_width < video_height:
-            dimensions = 'vert'
-        elif video_width > video_height:
-            dimensions = 'horz'
-        else:
-            dimensions = 'square'
+        vid_length = video.duration
+        if vid_length > 0:
+            # Get the video dimensions (resolution)
+            video_width, video_height = video.size
+            # Determine the dimensions category (vertical, horizontal, or square)
+            if video_width < video_height:
+                dimensions = 'vert'
+            elif video_width > video_height:
+                dimensions = 'horz'
+            else:
+                dimensions = 'square'
         # Close the video file
         video.close()
 
@@ -208,7 +273,9 @@ def delete_by_dim():
         # print(f"Video Name: {video_file} Dimensions {video_width}x{video_height} pixels: Category: {dimensions}")
         # print(f"Video Width is {video_width} and Minimum Width is {min_width}, Video Height is {video_height} and Minimum Height is {min_height}")
         # Check if the width is less than the minimum width and delete the video
-        if (video_width < min_width) and (video_height < min_height):
+        if ((video_width < vert_min_width) and (video_height < vert_min_height)) or \
+                ((video_width < horz_min_width) and (video_height < horz_min_height)) or \
+                ((video_width < square_min_width_height) and (video_height < square_min_width_height)):
             os.remove(video_path)
             deleted_files.append((video_file, video_width, video_height))
             print(f"Deleted {video_file} for small dimensions.")
@@ -241,16 +308,18 @@ def move_by_dim():
         # Load the video file using MoviePy
         video = VideoFileClip(video_path)
         # Get the video dimensions (resolution)
-        video_width, video_height = video.size
-        # Determine the dimensions category (vertical, horizontal, or square)
-        if video_width < video_height:
-            dimensions = 'vert'
-        elif video_width > video_height:
-            dimensions = 'horz'
-        else:
-            dimensions = 'square'
-        # Close the video file
-        video.close()
+        vid_length = video.duration
+        if vid_length > 0:
+            video_width, video_height = video.size
+            # Determine the dimensions category (vertical, horizontal, or square)
+            if video_width < video_height:
+                dimensions = 'vert'
+            elif video_width > video_height:
+                dimensions = 'horz'
+            else:
+                dimensions = 'square'
+            # Close the video file
+            video.close()
         # Print the video name, size, and dimensions
         # print(f"Video Name: {video_file} Dimensions {video_width}x{video_height} pixels: Category: {dimensions}")
         # print(f"Video Width is {video_width} and Minimum Width is {min_width}, Video Height is {video_height} and Minimum Height is {min_height}")
