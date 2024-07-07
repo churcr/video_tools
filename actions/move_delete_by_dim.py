@@ -4,10 +4,13 @@ from tkinter import filedialog
 from tkinter import simpledialog
 from moviepy.editor import VideoFileClip
 import ttkbootstrap as ttk
-from ttkbootstrap.constants import *
+# from ttkbootstrap.constants import *
 from datetime import datetime
 import pandas as pd
-import cv2
+import shutil
+# from shutil import copy
+# from os import remove
+# import cv2
 # Start of main code
 # Declare variables
 min_width = 0
@@ -131,8 +134,8 @@ def both_actions():
         video_path = os.path.join(video_directory, video_file)
         # Load the video file using MoviePy
         video = VideoFileClip(video_path)
-        vid_length = VideoFileClip(vid_legnth)
-        if vid_length > 0:
+        video_length = video.duration
+        if video_length > 0:
             # Get the video dimensions (resolution)
             video_width, video_height = video.size
             # Determine the dimensions category (vertical, horizontal, or square)
@@ -154,7 +157,7 @@ def both_actions():
                 deleted_files.append((video_file, video_width, video_height))
                 print(f"Deleted {video_file} for small dimensions.")
                 files_deleted = True
-            elif (video_width < norz_min_width) and (video_height < horz_min_height):
+            elif (video_width < horz_min_width) and (video_height < horz_min_height):
                 # Video is smaller then the minimum horizontal dimensions
                 os.remove(video_path)
                 deleted_files.append((video_file, video_width, video_height))
@@ -196,8 +199,11 @@ def move_all():
         os.makedirs(output_dir, exist_ok=True)
 
     # Get min dimensions
-    min_width = get_min_width()
-    min_height = get_min_height()
+    vert_min_width = get_vert_min_width()
+    vert_min_height = get_vert_min_height()
+    horz_min_width = get_horz_min_width()
+    horz_min_height = get_horz_min_height()
+    square_min_width_height = get_square_min_width_height()
     # List all files in the selected directory
     # print(video_directory)
     files_deleted = False
@@ -213,7 +219,7 @@ def move_all():
             video_width, video_height = video.size
             # Determine the dimensions category (vertical, horizontal, or square)
             if ((video_width < vert_min_width) and (video_height < vert_min_height)) or \
-            ((video_width < norz_min_width) and (video_height < horz_min_height)) or \
+            ((video_width < horz_min_width) and (video_height < horz_min_height)) or \
             ((video_width < square_min_width_height) and (video_height < square_min_width_height)):
                 dimensions = 'too small'
             elif video_width < video_height:
@@ -307,10 +313,10 @@ def move_too_small_dim():
     files_moved = False
 
     # Recursively list all files in the selected directory and its subdirectories
-    for root, _, files in os.walk(video_directory):  # <-- Highlighted change
-        for video_file in files:
-            if video_file.endswith(('.mp4', '.avi', '.mkv', '.mpg', '.wmv', '.mk4', '.m4v')):
-                video_path = os.path.join(video_directory, video_file)
+    for root, dirs, files in os.walk(video_directory):
+        for filename in files:
+            if filename.endswith(('.mp4', '.avi', '.mkv', '.mpg', '.wmv', '.mk4', '.m4v')):
+                video_path = os.path.join(root, filename)
 
                 try:
                     # Load the video file using MoviePy
@@ -335,23 +341,22 @@ def move_too_small_dim():
                         ((video_width < square_min_width_height) and (video_height < square_min_width_height)):
 
                         # Move the video to the small_dim_dir
-                        shutil.move(video_path, os.path.join(small_dim_dir, video_file))
+                        # Close the video file
+                        video.close()
+                        newpath = os.path.join(small_dim_dir,filename)
+                        shutil.move(video_path, newpath)
                         print(f"Moved {video_path} for small dimensions.")
                         files_moved = True
                     else:
                         print(f"Not moving {video_path} for small dimensions")
 
-                    # Close the video file
-                    video.close()
 
                 except Exception as e:
+                    print(e)
                     continue
 
     print("All Done Processing Files!")
-    if files_moved:
-        save_file(video_directory)
-    else:
-        print("No files moved by dim")
+
 def move_by_dim():
     video_directory = get_dir()
     # Create the output directories for different dimensions
