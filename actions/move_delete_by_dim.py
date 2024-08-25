@@ -288,7 +288,7 @@ def delete_too_small_dim():
             # print()
             files_deleted = True
         else:
-            print(f"Ketp {video_path}")
+            print(f"Kept {video_path}")
 
     print("All Done Deleting Files!")
     if files_deleted:
