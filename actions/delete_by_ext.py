@@ -20,7 +20,7 @@ directory = filedialog.askdirectory(title="Select Directory")
 if directory:
     # Get the extension using simpledialog.askstring
     # extension = simpledialog.askstring("Input", "Enter file extension (e.g., .jpg):")
-    extension = ".jpg"
+    extension = ".mp4"
     if extension:
         # Remove files with the specified extension
         remove_files_by_ext(directory, [extension])

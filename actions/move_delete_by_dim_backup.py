@@ -12,25 +12,6 @@ import shutil
 # from os import remove
 # import cv2
 # Start of main code
-# ---- Added helpers for recursive/non-recursive video scanning ----
-EXTENSIONS = ('.mp4', '.avi', '.mkv', '.mpg', '.wmv', '.mk4', '.m4v', '.mov', '.ts', '.vob', '.m2ts')
-
-def iter_video_files(folder: str, recursive: bool):
-    if recursive:
-        for root, _, files in os.walk(folder):
-            for fn in files:
-                if fn.lower().endswith(EXTENSIONS):
-                    yield os.path.join(root, fn)
-    else:
-        try:
-            for fn in os.listdir(folder):
-                p = os.path.join(folder, fn)
-                if os.path.isfile(p) and fn.lower().endswith(EXTENSIONS):
-                    yield p
-        except Exception as e:
-            print(f"Error listing folder {folder}: {e}")
-# ---- end added helpers ----
-
 # Declare variables
 min_width = 0
 vert_min_width = 0
@@ -67,21 +48,15 @@ def get_dir():
     video_directory = filedialog.askdirectory(title="Select the directory containing your video files")
     # print(video_directory)
     # Check if the user canceled the file dialog
-
-    root.destroy()  # NEW: clean up the temporary root
-
     if not video_directory:
         print("Directory selection canceled. Exiting.")
     else:
         return video_directory
 
-
 def get_vert_min_width():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
     vert_width_value = simpledialog.askstring("Minimum Vertical Width", "Enter the minimum vertical video width:", initialvalue=480)
-
-    root.destroy()  # NEW: clean up the temporary root
 
     try:
         vert_min_width = float(vert_width_value)
@@ -94,8 +69,6 @@ def get_horz_min_width():
     root.withdraw()  # Hide the main window
     horz_width_value = simpledialog.askstring("Minimum Horizontal Width", "Enter the minimum horizontal video width:", initialvalue=720)
 
-    root.destroy()  # NEW: clean up the temporary root
-
     try:
         horz_min_width = float(horz_width_value)
         return horz_min_width
@@ -107,8 +80,6 @@ def get_vert_min_height():
     root.withdraw()  # Hide the main window
     vert_height_value = simpledialog.askstring("Minimum Vertical Height", "Enter the minimum vertical video height:", initialvalue=720)
 
-    root.destroy()  # NEW: clean up the temporary root
-
     try:
         vert_min_height = float(vert_height_value)
         return vert_min_height
@@ -118,8 +89,6 @@ def get_horz_min_height():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
     horz_height_value = simpledialog.askstring("Minimum Horizontal Height", "Enter the minimum horizontal video height:", initialvalue=480)
-
-    root.destroy()  # NEW: clean up the temporary root
 
     try:
         horz_min_height = float(horz_height_value)
@@ -131,8 +100,6 @@ def get_square_min_width_height():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
     square_min_value = simpledialog.askstring("Minimum Square Width and Height", "Enter the minimum square video width and height:", initialvalue=480)
-
-    root.destroy()  # NEW: clean up the temporary root
 
     try:
         square_min_width_height = float(square_min_value)
@@ -276,55 +243,58 @@ def move_all():
                 # print()
                 print("All Done Moving Files!")
 
-
 def delete_too_small_dim():
-    """Renamed: deletes videos in folder only; now delegates to unified function."""
-    delete_videos_by_too_small_dimension(recursive=False)
-
-def delete_videos_by_too_small_dimension(recursive: bool):
-    """Delete videos smaller than user-specified thresholds. If recursive=True, includes subfolders."""
-    global deleted_files
-    deleted_files.clear()
     video_directory = get_dir()
-    if not video_directory:
-        print("Directory selection canceled. Exiting.")
-        return
-
+    # Create the output directories for different dimensions
     # Get min dimensions
     vert_min_width = get_vert_min_width()
     vert_min_height = get_vert_min_height()
     horz_min_width = get_horz_min_width()
     horz_min_height = get_horz_min_height()
     square_min_width_height = get_square_min_width_height()
-
     files_deleted = False
-
-    for video_path in iter_video_files(video_directory, recursive=recursive):
-        try:
-            with VideoFileClip(video_path) as video:
-                video_width, video_height = video.size
-            # Delete if smaller than any of the threshold combos
-            if ((video_width < vert_min_width) and (video_height < vert_min_height)) or                ((video_width < horz_min_width) and (video_height < horz_min_height)) or                ((video_width < square_min_width_height) and (video_height < square_min_width_height)):
-                os.remove(video_path)
-                deleted_files.append((os.path.basename(video_path), video_width, video_height))
-                print(f"Deleted {video_path} for small dimensions.")
-                files_deleted = True
+    # List all files in the selected directory
+    print(video_directory)
+    video_files = [f for f in os.listdir(video_directory) if f.endswith(('.mp4', '.avi', '.mkv', '.mpg', '.wmv', '.mk4','.m4v'))]
+    # Loop through each video file
+    for video_file in video_files:
+        video_path = os.path.join(video_directory, video_file)
+        # Load the video file using MoviePy
+        video = VideoFileClip(video_path)
+        vid_length = video.duration
+        if vid_length > 0:
+            # Get the video dimensions (resolution)
+            video_width, video_height = video.size
+            # Determine the dimensions category (vertical, horizontal, or square)
+            if video_width < video_height:
+                dimensions = 'vert'
+            elif video_width > video_height:
+                dimensions = 'horz'
             else:
-                print(f"Kept {video_path}")
-        except Exception as e:
-            print(f"Error processing {video_path}: {e}")
+                dimensions = 'square'
+        # Close the video file
+        video.close()
+
+        # Print the video name, size, and dimensions
+        # print(f"Video Name: {video_file} Dimensions {video_width}x{video_height} pixels: Category: {dimensions}")
+        # print(f"Video Width is {video_width} and Minimum Width is {min_width}, Video Height is {video_height} and Minimum Height is {min_height}")
+        # Check if the width is less than the minimum width and delete the video
+        if ((video_width < vert_min_width) and (video_height < vert_min_height)) or \
+                ((video_width < horz_min_width) and (video_height < horz_min_height)) or \
+                ((video_width < square_min_width_height) and (video_height < square_min_width_height)):
+            os.remove(video_path)
+            deleted_files.append((video_file, video_width, video_height))
+            print(f"Deleted {video_path} for small dimensions.")
+            # print()
+            files_deleted = True
+        else:
+            print(f"Kept {video_path}")
 
     print("All Done Deleting Files!")
     if files_deleted:
         save_file(video_directory)
     else:
         print("No files deleted by dim")
-
-
-def delete_too_small_dim_subfolders():
-    """New button target: process folder and subfolders."""
-    delete_videos_by_too_small_dimension(recursive=True)
-
 
 def move_too_small_dim():
     video_directory = get_dir()
@@ -438,13 +408,8 @@ def main_script():
     mainroot.geometry("750x250")
     label = ttk.Label(mainroot, text="What do you want to do?")
     label.pack()
-    button1 = ttk.Button(mainroot, text="Delete videos by too small dimension in folder", bootstyle="success, outline",
+    button1 = ttk.Button(mainroot, text="Delete videos by too small dimension", bootstyle="success, outline",
                          command=delete_too_small_dim)
-    # NEW — define the recursive button (folder + subfolders)
-    button1b = ttk.Button(mainroot,
-                          text="Delete videos by too small dimension in folder and sub folders",
-                          bootstyle="success, outline",
-                          command=delete_too_small_dim_subfolders)  # NEW
     button2 = ttk.Button(mainroot, text="Move videos by too small dimension to root", bootstyle="success, outline",
                          command=move_too_small_dim)
     button3 = ttk.Button(mainroot, text="Move videos to dimensions folder", bootstyle="success, outline",
@@ -456,7 +421,6 @@ def main_script():
     button6 = ttk.Button(mainroot, text="Quit", bootstyle="success, outline", command=quit)
     # Pack the buttons into the window
     button1.pack()
-    button1b.pack()
     button2.pack()
     button3.pack()
     button4.pack()

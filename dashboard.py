@@ -40,14 +40,16 @@ label.pack()
 
 button1 = ttk.Button(mainroot, text="Delete Short Videos", bootstyle="success, outline",
                      command=run_remove_short_vids)
-button2 = ttk.Button(mainroot, text="Modify Videos Based on Dimensions", bootstyle="success, outline",
-                     command=run_vid_dim_script)
-button3 = ttk.Button(mainroot, text="Remove Non-Standard Characters", bootstyle="success, outline",
-                     command=remove_non_standard_char)
-button4 = ttk.Button(mainroot, text="Move Short Videos to Root", bootstyle="success, outline",
+button2 = ttk.Button(mainroot, text="Move Short Videos to Root", bootstyle="success, outline",
                      command=run_move_short_to_root)
-button5 = ttk.Button(mainroot, text="Move Short Videos to Subfolder", bootstyle="success, outline",
+button3 = ttk.Button(mainroot, text="Move Short Videos to Subfolder", bootstyle="success, outline",
                      command=run_move_short_to_sub)
+
+button4 = ttk.Button(mainroot, text="Modify Videos Based on Dimensions", bootstyle="success, outline",
+                     command=run_vid_dim_script)
+button5 = ttk.Button(mainroot, text="Remove Non-Standard Characters", bootstyle="success, outline",
+                     command=remove_non_standard_char)
+
 button6 = ttk.Button(mainroot, text="Quit", bootstyle="success, outline", command=quit)
 # Pack the buttons into the window
 button1.pack()

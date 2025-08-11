@@ -1,0 +1,45 @@
+pinokio.computer
+lsi sas 9200-16e 16-port external hba full height pcie -20 it mode zfs freenas
+Dashboard
+functions
+run_move_short_to_root > move_short_vids_to_root.main_script() > D:\video_tools\actions\move_short_vids_to_root.py
+
+run_move_short_to_sub > move_short_vids_to_subfolder.main_script() > D:\video_tools\actions\move_short_vids_to_subfolder.py
+
+run_remove_short_vids > orig_remove_short_vids.main_script() > D:\video_tools\actions\orig_remove_short_vids.py
+
+run_vid_dim_script > move_delete_by_dim.main_script() > D:\video_tools\actions\move_delete_by_dim.py
+
+
+remove_non_standard_char > remove_non_english_char.main() > D:\video_tools\actions\remove_non_english_char.py
+button2 = ttk.Button(mainroot, text="Modify Videos Based on Dimensions", bootstyle="success, outline",
+                     command=run_vid_dim_script)
+
+button1 = ttk.Button(mainroot, text="Delete Short Videos", bootstyle="success, outline",
+                     command=run_remove_short_vids)
+button4 = ttk.Button(mainroot, text="Move Short Videos to Root", bootstyle="success, outline",
+                     command=run_move_short_to_root)
+button5 = ttk.Button(mainroot, text="Move Short Videos to Subfolder", bootstyle="success, outline",
+                     command=run_move_short_to_sub)
+
+2button1 = ttk.Button(mainroot, text="Delete videos by too small dimension", bootstyle="success, outline",
+                         command=delete_too_small_dim)
+2button2 = ttk.Button(mainroot, text="Move videos by too small dimension to root", bootstyle="success, outline",
+                         command=move_too_small_dim)
+2button3 = ttk.Button(mainroot, text="Move videos to dimensions folder", bootstyle="success, outline",
+                         command=move_by_dim)
+2button4 = ttk.Button(mainroot, text="Move to dim folder and delete small dimensions", bootstyle="success, outline",
+                         command=both_actions)
+2button5 = ttk.Button(mainroot, text="Move all files by dimensions", bootstyle="success, outline",
+                         command=move_all)
+
+button3 = ttk.Button(mainroot, text="Remove Non-Standard Characters", bootstyle="success, outline",
+                     command=remove_non_standard_char)
+New button > delete by ext
+
+button6 = ttk.Button(mainroot, text="Quit", bootstyle="success, outline", command=quit)
+
+
+
+
+2button6 = ttk.Button(mainroot, text="Quit", bootstyle="success, outline", command=quit)
