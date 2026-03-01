@@ -33,7 +33,7 @@ def remove_non_standard_char():
 
 mainroot = ttk.Window(themename="superhero")
 mainroot.title("Main Menu")
-mainroot.geometry("750x450")
+mainroot.geometry("750x250")
 
 label = ttk.Label(mainroot, text="Main Menu")
 label.pack()
@@ -45,14 +45,8 @@ button2 = ttk.Button(mainroot, text="Move Short Videos to Root", bootstyle="succ
 button3 = ttk.Button(mainroot, text="Move Short Videos to Subfolder", bootstyle="success, outline",
                      command=run_move_short_to_sub)
 
-button4 = ttk.Button(mainroot, text="Delete videos by too small dimension in folder", bootstyle="success, outline",
-                     command=move_delete_by_dim.delete_too_small_dim)
-button4b = ttk.Button(mainroot, text="Delete videos by too small dimension in folder and sub folders", bootstyle="success, outline", command=move_delete_by_dim.delete_too_small_dim_subfolders)
-button4c = ttk.Button(mainroot, text="Move videos by too small dimension to root", bootstyle="success, outline", command=move_delete_by_dim.move_too_small_dim)
-button4d = ttk.Button(mainroot, text="Move videos to dimensions folder", bootstyle="success, outline", command=move_delete_by_dim.move_by_dim)
-button4e = ttk.Button(mainroot, text="Move to dim folder and delete small dimensions", bootstyle="success, outline", command=move_delete_by_dim.both_actions)
-button4f = ttk.Button(mainroot, text="Move all files by dimensions", bootstyle="success, outline", command=move_delete_by_dim.move_all)
-
+button4 = ttk.Button(mainroot, text="Modify Videos Based on Dimensions", bootstyle="success, outline",
+                     command=run_vid_dim_script)
 button5 = ttk.Button(mainroot, text="Remove Non-Standard Characters", bootstyle="success, outline",
                      command=remove_non_standard_char)
 
@@ -62,11 +56,6 @@ button1.pack()
 button2.pack()
 button3.pack()
 button4.pack()
-button4b.pack()
-button4c.pack()
-button4d.pack()
-button4e.pack()
-button4f.pack()
 button5.pack()
 button6.pack()
 
