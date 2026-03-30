@@ -39,7 +39,7 @@ def delete_short_videos(root_directory, threshold_duration):
     deleted_files = []
     for root, dirs, files in os.walk(root_directory):
         for filename in files:
-            if filename.endswith(('.mp4', '.avi', '.mkv', '.mpg', '.wmv', '.mk4', '.m4v')):  # Adjust the extensions as needed
+            if filename.endswith(('.mp4', '.avi', '.mkv', '.mpg', '.wmv', '.mk4', '.m4v', '.mov', '.ts', '.vob', '.m2ts', '.3gp')):  # Adjust the extensions as needed
                 video_path = os.path.join(root, filename)
                 video_duration = get_video_duration(video_path)
                 # print(threshold_duration, video_duration)

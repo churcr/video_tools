@@ -13,7 +13,7 @@ import shutil
 # import cv2
 # Start of main code
 # ---- Added helpers for recursive/non-recursive video scanning ----
-EXTENSIONS = ('.mp4', '.avi', '.mkv', '.mpg', '.wmv', '.mk4', '.m4v', '.mov', '.ts', '.vob', '.m2ts')
+EXTENSIONS = ('.mp4', '.avi', '.mkv', '.mpg', '.wmv', '.mk4', '.m4v', '.mov', '.ts', '.vob', '.m2ts', '.3gp')
 
 def iter_video_files(folder: str, recursive: bool):
     if recursive:

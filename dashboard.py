@@ -33,7 +33,7 @@ def remove_non_standard_char():
 
 mainroot = ttk.Window(themename="superhero")
 mainroot.title("Main Menu")
-mainroot.geometry("750x450")
+mainroot.geometry("750x600")
 
 label = ttk.Label(mainroot, text="Main Menu")
 label.pack()
