@@ -83,10 +83,10 @@ def main_script():
             df2 = pd.DataFrame(saved_files, columns=["File Path", "Duration (seconds)"])
 
             # Save the DataFrames to an Excel file
-            df.to_excel(excel_file_name, index=False, engine="openpyxl")
-            df2.to_excel(saved_excel_file_name, index=False, engine="openpyxl")
-            print(f"Deleted files and their durations saved to {excel_file_name}")
-            print(f"Saved files and their durations saved to {saved_excel_file_name}")
+            # df.to_excel(excel_file_name, index=False, engine="openpyxl")
+            # df2.to_excel(saved_excel_file_name, index=False, engine="openpyxl")
+            # print(f"Deleted files and their durations saved to {excel_file_name}")
+            # print(f"Saved files and their durations saved to {saved_excel_file_name}")
         else:
 
             print("No files were deleted.")
