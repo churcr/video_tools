@@ -87,6 +87,7 @@ def main_script():
             # df2.to_excel(saved_excel_file_name, index=False, engine="openpyxl")
             # print(f"Deleted files and their durations saved to {excel_file_name}")
             # print(f"Saved files and their durations saved to {saved_excel_file_name}")
+            print("All Done Deleting Files!")
         else:
 
             print("No files were deleted.")

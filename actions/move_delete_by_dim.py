@@ -58,6 +58,7 @@ def save_file(dir):
     # Save the DataFrames to an Excel file
     # df.to_excel(excel_file_name, index=False, engine="openpyxl")
     # print(f"Deleted files and their dimensions saved to {excel_file_name}")
+    print("All Done Deleting Files!")
 
 def get_dir():
     # Create a Tkinter root window (hidden)
