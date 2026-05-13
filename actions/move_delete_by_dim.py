@@ -80,7 +80,7 @@ def get_dir():
 def get_vert_min_width():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
-    vert_width_value = simpledialog.askstring("Minimum Vertical Width", "Enter the minimum vertical video width:", initialvalue=480)
+    vert_width_value = simpledialog.askstring("Minimum Vertical Width", "Enter the minimum vertical video width:", initialvalue=479)
 
     root.destroy()  # NEW: clean up the temporary root
 
@@ -93,7 +93,7 @@ def get_vert_min_width():
 def get_horz_min_width():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
-    horz_width_value = simpledialog.askstring("Minimum Horizontal Width", "Enter the minimum horizontal video width:", initialvalue=600)
+    horz_width_value = simpledialog.askstring("Minimum Horizontal Width", "Enter the minimum horizontal video width:", initialvalue=599)
 
     root.destroy()  # NEW: clean up the temporary root
 
@@ -106,7 +106,7 @@ def get_horz_min_width():
 def get_vert_min_height():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
-    vert_height_value = simpledialog.askstring("Minimum Vertical Height", "Enter the minimum vertical video height:", initialvalue=480)
+    vert_height_value = simpledialog.askstring("Minimum Vertical Height", "Enter the minimum vertical video height:", initialvalue=599)
 
     root.destroy()  # NEW: clean up the temporary root
 
@@ -118,7 +118,7 @@ def get_vert_min_height():
 def get_horz_min_height():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
-    horz_height_value = simpledialog.askstring("Minimum Horizontal Height", "Enter the minimum horizontal video height:", initialvalue=480)
+    horz_height_value = simpledialog.askstring("Minimum Horizontal Height", "Enter the minimum horizontal video height:", initialvalue=479)
 
     root.destroy()  # NEW: clean up the temporary root
 
@@ -131,7 +131,7 @@ def get_horz_min_height():
 def get_square_min_width_height():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
-    square_min_value = simpledialog.askstring("Minimum Square Width and Height", "Enter the minimum square video width and height:", initialvalue=480)
+    square_min_value = simpledialog.askstring("Minimum Square Width and Height", "Enter the minimum square video width and height:", initialvalue=479)
 
     root.destroy()  # NEW: clean up the temporary root
 
@@ -305,7 +305,7 @@ def delete_videos_by_too_small_dimension(recursive: bool):
             with VideoFileClip(video_path) as video:
                 video_width, video_height = video.size
             # Delete if smaller than any of the threshold combos
-            if ((video_width < vert_min_width) or (video_height < vert_min_height)) or                ((video_width < horz_min_width) or (video_height < horz_min_height)) or                ((video_width < square_min_width_height) or (video_height < square_min_width_height)):
+            if ((video_width < vert_min_width) or (video_height < vert_min_height) or (video_width < horz_min_width) or (video_height < horz_min_height) or (video_width < square_min_width_height) or (video_height < square_min_width_height)):
                 os.remove(video_path)
                 deleted_files.append((os.path.basename(video_path), video_width, video_height))
                 print(f"Deleted {video_path} for small dimensions. {video_width} x {video_height}")
