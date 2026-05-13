@@ -185,23 +185,23 @@ def both_actions():
             print(f"Video Name: {video_file} Dimensions {video_width}x{video_height} pixels: Category: {dimensions}")
             print(f"Video Width is {video_width} and Minimum Width is {min_width}, Video Height is {video_height} and Minimum Height is {min_height}")
             # Check the dimensions
-            if (video_width < vert_min_width) or (video_height < vert_min_height):
+            if (video_width < vert_min_width) and (video_height < vert_min_height):
                 # Video is smaller then the minimum vertical dimensions
                 os.remove(video_path)
                 deleted_files.append((video_file, video_width, video_height))
-                print(f"Deleted {video_file} for small dimensions.")
+                print(f"Deleted {video_file} for small dimensions. {video_width} x {video_height}")
                 files_deleted = True
-            elif (video_width < horz_min_width) or (video_height < horz_min_height):
+            elif (video_width < horz_min_width) and (video_height < horz_min_height):
                 # Video is smaller then the minimum horizontal dimensions
                 os.remove(video_path)
                 deleted_files.append((video_file, video_width, video_height))
-                print(f"Deleted {video_file} for small dimensions.")
+                print(f"Deleted {video_file} for small dimensions. {video_width} x {video_height}")
                 files_deleted = True
-            elif (video_width < square_min_width_height) or (video_height < square_min_width_height):
+            elif (video_width < square_min_width_height) and (video_height < square_min_width_height):
                 # Video is smaller then the minimum square dimensions
                 os.remove(video_path)
                 deleted_files.append((video_file, video_width, video_height))
-                print(f"Deleted {video_file} for small dimensions.")
+                print(f"Deleted {video_file} for small dimensions. {video_width} x {video_height}")
                 files_deleted = True
             else:
                 # Video passed all dimension tests so move the video to the appropriate output directory
@@ -308,7 +308,7 @@ def delete_videos_by_too_small_dimension(recursive: bool):
             if ((video_width < vert_min_width) or (video_height < vert_min_height)) or                ((video_width < horz_min_width) or (video_height < horz_min_height)) or                ((video_width < square_min_width_height) or (video_height < square_min_width_height)):
                 os.remove(video_path)
                 deleted_files.append((os.path.basename(video_path), video_width, video_height))
-                print(f"Deleted {video_path} for small dimensions.")
+                print(f"Deleted {video_path} for small dimensions. {video_width} x {video_height}")
                 files_deleted = True
             else:
                 print(f"Kept {video_path}")
