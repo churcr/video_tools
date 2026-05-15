@@ -93,7 +93,7 @@ def get_vert_min_width():
 def get_horz_min_width():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
-    horz_width_value = simpledialog.askstring("Minimum Horizontal Width", "Enter the minimum horizontal video width:", initialvalue=719)
+    horz_width_value = simpledialog.askstring("Minimum Horizontal Width", "Enter the minimum horizontal video width:", initialvalue=599)
 
     root.destroy()  # NEW: clean up the temporary root
 
@@ -106,7 +106,7 @@ def get_horz_min_width():
 def get_vert_min_height():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
-    vert_height_value = simpledialog.askstring("Minimum Vertical Height", "Enter the minimum vertical video height:", initialvalue=719)
+    vert_height_value = simpledialog.askstring("Minimum Vertical Height", "Enter the minimum vertical video height:", initialvalue=599)
 
     root.destroy()  # NEW: clean up the temporary root
 
@@ -241,7 +241,7 @@ def move_all():
     # List all files in the selected directory
     # print(video_directory)
     files_deleted = False
-    video_files = [f for f in os.listdir(video_directory) if f.endswith(('.mp4', '.avi', '.mkv', '.mov', '.mpg', '.m4p', '.wmv', '.ts', '.vob', '.mpeg', '.3gp', '.m4v', '.m2ts'))]
+    video_files = [f for f in os.listdir(video_directory) if f.endswith(('.mp4', '.avi', '.mkv', '.mpg', '.wmv', '.mk4', '.m4v', '.mov', '.ts', '.vob', '.m2ts', '.3gp'))]
     # Loop through each video file
     for video_file in video_files:
         video_path = os.path.join(video_directory, video_file)
@@ -346,7 +346,7 @@ def move_too_small_dim():
     # Recursively list all files in the selected directory and its subdirectories
     for root, dirs, files in os.walk(video_directory):
         for filename in files:
-            if filename.endswith(('.mp4', '.avi', '.mkv', '.mov', '.mpg', '.m4p', '.wmv', '.ts', '.vob', '.mpeg', '.3gp', '.m4v', '.m2ts')):
+            if filename.endswith(('.mp4', '.avi', '.mkv', '.mpg', '.wmv', '.mk4', '.m4v')):
                 video_path = os.path.join(root, filename)
 
                 try:
@@ -401,7 +401,7 @@ def move_by_dim():
         os.makedirs(output_dir, exist_ok=True)
     # List all files in the selected directory
     # print(video_directory)
-    video_files = [f for f in os.listdir(video_directory) if f.endswith(('.mp4', '.avi', '.mkv', '.mov', '.mpg', '.m4p', '.wmv', '.ts', '.vob', '.mpeg', '.3gp', '.m4v', '.m2ts'))]
+    video_files = [f for f in os.listdir(video_directory) if f.endswith(('.mp4', '.avi', '.mkv', '.mpg', '.wmv', '.mk4', '.m4v'))]
     # Loop through each video file
     for video_file in video_files:
         video_path = os.path.join(video_directory, video_file)
