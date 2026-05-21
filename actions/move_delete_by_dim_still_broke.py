@@ -31,39 +31,6 @@ def iter_video_files(folder: str, recursive: bool):
             print(f"Error listing folder {folder}: {e}")
 # ---- end added helpers ----
 
-
-# ---- Dimension decision helpers ----
-def get_video_orientation(video_width, video_height):
-    """Return vert, horz, or square based on the actual video dimensions."""
-    if video_width < video_height:
-        return 'vert'
-    if video_width > video_height:
-        return 'horz'
-    return 'square'
-
-
-def is_too_small_for_orientation(video_width, video_height,
-                                 vert_min_width, vert_min_height,
-                                 horz_min_width, horz_min_height,
-                                 square_min_width_height):
-    """
-    Only compare the video against the threshold for its own orientation.
-
-    This fixes the false-delete bug where a horizontal 640x480 video was being
-    deleted because its height was lower than the vertical-video height setting.
-    """
-    orientation = get_video_orientation(video_width, video_height)
-
-    if orientation == 'vert':
-        return (video_width < vert_min_width) or (video_height < vert_min_height), orientation
-
-    if orientation == 'horz':
-        return (video_width < horz_min_width) or (video_height < horz_min_height), orientation
-
-    return ((video_width < square_min_width_height) or
-            (video_height < square_min_width_height)), orientation
-# ---- end dimension decision helpers ----
-
 # Declare variables
 min_width = 0
 vert_min_width = 0
@@ -86,7 +53,7 @@ def save_file(dir):
     saved_excel_file_name = f"{use_path}saved_files_{timestamp}.xlsx"
 
     # Convert the list of deleted files to a DataFrame
-    df = pd.DataFrame(deleted_files, columns=["File Name", "Width", "Height"])
+    df = pd.DataFrame(deleted_files, columns=["File Name", "Width", "Length"])
 
     # Save the DataFrames to an Excel file
     df.to_excel(excel_file_name, index=False, engine="openpyxl")
@@ -112,7 +79,7 @@ def get_dir():
 def get_horz_min_width():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
-    horz_width_value = simpledialog.askstring("Minimum Horizontal Width", "Enter the minimum horizontal video width:", initialvalue=480)
+    horz_width_value = simpledialog.askstring("Minimum Horizontal Width", "Enter the minimum horizontal video width:", initialvalue=854)
 
     root.destroy()  # NEW: clean up the temporary root
 
@@ -152,7 +119,7 @@ def get_vert_min_width():
 def get_vert_min_height():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
-    vert_height_value = simpledialog.askstring("Minimum Vertical Height", "Enter the minimum vertical video height:", initialvalue=480)
+    vert_height_value = simpledialog.askstring("Minimum Vertical Height", "Enter the minimum vertical video height:", initialvalue=854)
 
     root.destroy()  # NEW: clean up the temporary root
 
@@ -218,18 +185,24 @@ def both_actions():
             # Print the video name, size, and dimensions
             print(f"Video Name: {video_file} Dimensions {video_width}x{video_height} pixels: Category: {dimensions}")
             print(f"Video Width is {video_width} and Minimum Width is {min_width}, Video Height is {video_height} and Minimum Height is {min_height}")
-            # Check only against the threshold for this video's actual orientation
-            should_delete, dimensions = is_too_small_for_orientation(
-                video_width, video_height,
-                vert_min_width, vert_min_height,
-                horz_min_width, horz_min_height,
-                square_min_width_height
-            )
-
-            if should_delete:
+            # Check the dimensions
+            if (video_width < vert_min_width) or (video_height < vert_min_height):
+                # Video is smaller then the minimum vertical dimensions
                 os.remove(video_path)
-                deleted_files.append((video_path, video_width, video_height))
-                print(f"Deleted {video_file} for small {dimensions} dimensions. {video_width} x {video_height}")
+                deleted_files.append((video_file, video_width, video_height))
+                print(f"Deleted {video_file} for small dimensions. {video_width} x {video_height}")
+                files_deleted = True
+            elif (video_width < horz_min_width) or (video_height < horz_min_height):
+                # Video is smaller then the minimum horizontal dimensions
+                os.remove(video_path)
+                deleted_files.append((video_file, video_width, video_height))
+                print(f"Deleted {video_file} for small dimensions. {video_width} x {video_height}")
+                files_deleted = True
+            elif (video_width < square_min_width_height) or (video_height < square_min_width_height):
+                # Video is smaller then the minimum square dimensions
+                os.remove(video_path)
+                deleted_files.append((video_file, video_width, video_height))
+                print(f"Deleted {video_file} for small dimensions. {video_width} x {video_height}")
                 files_deleted = True
             else:
                 # Video passed all dimension tests so move the video to the appropriate output directory
@@ -279,15 +252,17 @@ def move_all():
         if vid_length > 0:
             # Get the video dimensions (resolution)
             video_width, video_height = video.size
-            # Determine whether this video is too small for its own orientation
-            too_small, dimensions = is_too_small_for_orientation(
-                video_width, video_height,
-                vert_min_width, vert_min_height,
-                horz_min_width, horz_min_height,
-                square_min_width_height
-            )
-            if too_small:
-                dimensions = 'too_small'
+            # Determine the dimensions category (vertical, horizontal, or square)
+            if ((video_width < vert_min_width) or (video_height < vert_min_height)) or \
+            ((video_width < horz_min_width) or (video_height < horz_min_height)) or \
+            ((video_width < square_min_width_height) or (video_height < square_min_width_height)):
+                dimensions = 'too small'
+            elif video_width < video_height:
+                dimensions = 'vert'
+            elif video_width > video_height:
+                dimensions = 'horz'
+            else:
+                dimensions = 'square'
             # Close the video file
             video.close()
             # Print the video name, size, and dimensions
@@ -330,21 +305,14 @@ def delete_videos_by_too_small_dimension(recursive: bool):
         try:
             with VideoFileClip(video_path) as video:
                 video_width, video_height = video.size
-
-            should_delete, orientation = is_too_small_for_orientation(
-                video_width, video_height,
-                vert_min_width, vert_min_height,
-                horz_min_width, horz_min_height,
-                square_min_width_height
-            )
-
-            if should_delete:
+            # Delete if smaller than any of the threshold combos
+            if ((video_width < vert_min_width) or (video_height < vert_min_height) or (video_width < horz_min_width) or (video_height < horz_min_height) or (video_width < square_min_width_height) or (video_height < square_min_width_height)):
                 os.remove(video_path)
-                deleted_files.append((video_path, video_width, video_height))
-                print(f"Deleted {video_path} for small {orientation} dimensions. {video_width} x {video_height}")
+                deleted_files.append((os.path.basename(video_path), video_width, video_height))
+                print(f"Deleted {video_path} for small dimensions. {video_width} x {video_height}")
                 files_deleted = True
             else:
-                print(f"Kept {video_path} ({orientation}) {video_width} x {video_height}")
+                print(f"Kept {video_path}")
         except Exception as e:
             print(f"Error processing {video_path}: {e}")
 
@@ -391,24 +359,28 @@ def move_too_small_dim():
                         # Get the video dimensions (resolution)
                         video_width, video_height = video.size
 
-                    should_move, dimensions = is_too_small_for_orientation(
-                        video_width, video_height,
-                        vert_min_width, vert_min_height,
-                        horz_min_width, horz_min_height,
-                        square_min_width_height
-                    )
+                    # Determine the dimensions category (vertical, horizontal, or square)
+                    if video_width < video_height:
+                        dimensions = 'vert'
+                    elif video_width > video_height:
+                        dimensions = 'horz'
+                    else:
+                        dimensions = 'square'
 
-                    if should_move:
+                    # Check if the video dimensions are less than the minimum dimensions
+                    if ((video_width < vert_min_width) or (video_height < vert_min_height)) or \
+                        ((video_width < horz_min_width) or (video_height < horz_min_height)) or \
+                        ((video_width < square_min_width_height) or (video_height < square_min_width_height)):
+
                         # Move the video to the small_dim_dir
                         # Close the video file
                         video.close()
                         newpath = os.path.join(small_dim_dir,filename)
                         shutil.move(video_path, newpath)
-                        print(f"Moved {video_path} for small {dimensions} dimensions.")
+                        print(f"Moved {video_path} for small dimensions.")
                         files_moved = True
                     else:
-                        video.close()
-                        print(f"Not moving {video_path}; kept {dimensions} video {video_width} x {video_height}")
+                        print(f"Not moving {video_path} for small dimensions")
 
 
                 except Exception as e:
